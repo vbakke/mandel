@@ -1,0 +1,66 @@
+
+.flex_h {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex_v {
+    display: flex;
+    flex-direction: row;
+}
+
+.title {
+    padding: 10px;
+    text-align: center;
+}
+h1 {
+    margin: 0;
+}
+h2 {
+    margin: 15px 10px 5px;
+}
+
+
+.content {
+    max-width: 1000px;
+    margin: 10px auto;
+}
+
+
+body {
+    background: #1f253d;
+    color: white;
+    font-family:  Arial, Helvetica, sans-serif;
+}
+
+.box {
+    background: #394264;
+    margin: 10px;
+}
+.mandelbrot .canvases,
+.mandelbrot canvas {
+    width: 600px;
+    height: 300px;
+}
+
+.mandelbrot canvas {
+    position: absolute;
+}
+
+.mandelbrot input.c {
+    width: 20rem;
+}
+
+.orbit canvas {
+    width: 100%;
+    height: 400px;
+}
+
+canvas {
+    border: 1px solid #555555;
+}
+
+.magnitudes-box {
+    width: 300px;
+    height: 300px;
+}

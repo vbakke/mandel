@@ -1,0 +1,36 @@
+{
+  "name": "mandel",
+  "version": "0.0.1",
+  "description": "",
+  "main": "js/app.js",
+  "directories": {
+    "lib": "js"
+  },
+  "dependencies": {
+    "chart.js": "^3.6.0"
+  },
+  "devDependencies": {
+    "browserify": "^16.5.2",
+    "watchify": "^4.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "watchify js/app.js -o bundle.js",
+    "build": "browserify js/app.js -o bundle.js",
+    "dist": "npm run build && findstr /RV \"<script.src=.*bundle </html>\" mandel.html > tmp.html && echo ^<script^> >> tmp.html && type bundle.js >> tmp.html && echo ^</script^>^</html^> >> tmp.html && npm run dist:complete",
+    "dist:complete": "xcopy /Y tmp.html ..\\index.html && del tmp.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vbakke/mandel.git"
+  },
+  "author": "Vegard Bakke",
+  "contributors": [
+    "Vegard Bakke"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vbakke/mandel/issues"
+  },
+  "homepage": "https://github.com/vbakke/mandel#readme"
+}
