@@ -1,8 +1,9 @@
 # ToDo
-- Add support touch drawing on mobile
-- Add click to "let go" of pos drag
-- Add Auto-zoom switch på Orbit
-- Add Update switch på Orbit og Magnitude
+- Add extra formulaes
+- Add UI Auto-zoom switch på Orbit
+- Add UI Update switch på Orbit og Magnitude
+- Add levels, to achive Spiral and full background
+- Add tutorial
 
 # Tutorial
 - First sample: 0.6 + 0.4 i (infinite)
@@ -13,10 +14,21 @@
 
 
 # Future
+- Add support touch drawing on mobile
 - Zoomable mandelbrot
 - Add mandelbrot image
+- Gamiefication:
+  - Levels:
+    - Complex number
+    - Show (a+bi)^2
+    - Show Orbit for zn+1 = zn^2
+    - Show Orbit for zn+1 = zn^2 + c
+    - Show Orbit for zn+1 = zn^2 + zn
+    - Show 
+
 
 # Done
+- Add click to "let go" of pos drag
 - Stop orbit zoom when animating
 - Stop animation button
 - Editble Console

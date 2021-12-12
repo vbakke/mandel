@@ -4,14 +4,19 @@ class MandelView {
     constructor() {
         this.$mandel = $('.mandelbrot');
 
+        this.drag_on = true;
+
         this.mandel_canvas = this.$mandel.find('canvas.mandelbrot')[0];
         this.overlay_canvas = this.$mandel.find('canvas.overlay')[0];
         this.mandel_ctx = this.mandel_canvas.getContext('2d');
         this.overlay_ctx = this.overlay_canvas.getContext('2d');
+        
+        this.overlay_canvas.classList.toggle('cursor-pointer', this.drag_on);
 
         // Setup event handlers
-        this.$mandel.find('canvas').mousemove((event) => { return this.on_mandel_mousemove(event) })
-        this.$mandel.find('input.c').change((event) => { return this.on_num_changes(event) })
+        this.$mandel.find('canvas').click((event) => { return this.on_mandel_mouseclick(event) });
+        this.$mandel.find('canvas').mousemove((event) => { return this.on_mandel_mousemove(event) });
+        this.$mandel.find('input.c').change((event) => { return this.on_num_changes(event) });
     }
 
 
@@ -166,18 +171,26 @@ class MandelView {
         }
     }
 
+    on_mandel_mouseclick(event) {
+        this.drag_on = !this.drag_on;
+        console.log('Klikk: ' + this.drag_on);
+        this.overlay_canvas.classList.toggle('cursor-pointer');
+    }
+    
     on_mandel_mousemove(event) {
-        let pos = this.getMousePos(this.mandel_canvas, event);
-        pos.x /= this.dpr * 2;
-        pos.y /= this.dpr * 2;
-        pos.x -= this.model.mandel_view.tx;
-        pos.y -= this.model.mandel_view.ty;
-        pos.x /= this.model.mandel_view.scale;
-        pos.y /= -this.model.mandel_view.scale;
+        if (this.drag_on) {
+            let pos = this.getMousePos(this.mandel_canvas, event);
+            pos.x /= this.dpr * 2;
+            pos.y /= this.dpr * 2;
+            pos.x -= this.model.mandel_view.tx;
+            pos.y -= this.model.mandel_view.ty;
+            pos.x /= this.model.mandel_view.scale;
+            pos.y /= -this.model.mandel_view.scale;
 
-        $(this).triggerHandler(
-            $.Event('pos_changed', { 'pos': pos })
-        );
+            $(this).triggerHandler(
+                $.Event('pos_changed', { 'pos': pos })
+            );
+        }
     }
 
     on_num_changes(event) {
