@@ -90,7 +90,7 @@ class MandelView {
 
         // ---- Mandelbrot layer ----
         // Color the dot
-        if (model.wobble == 0) { // Outside
+        if (model.infinite) { // Outside
             let colVal = Math.min(Math.max((model.magnitudes.length - 9) / 10, 0.1), 0.9);
             // let val = Math.log10(Math.log10(model.magnitudes[9].magnitude));
             // let colVal = Math.min(Math.max((3/(val+1)), 0.1), 0.9);

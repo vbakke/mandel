@@ -11,39 +11,74 @@
         integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="./css/mandel.css">
-    <style>
-    </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+    MathJax = {
+      tex: {inlineMath: [['$', '$']]}
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
 </head>
 
 <body>
     <div class="content">
-        <div class="box title"><h1>Mandelbrot &nbsp; - &nbsp; <i>Z<sub>n+1</sub> = Z<sub>n</sub><sup>2</sup> + c</i></h1></div>
-        <div class="flex_v">
-            <div class="mandelbrot flex_h">
-                <h2>Explore</h2>
-                <div class="canvases box">
-                    <canvas class="mandelbrot"></canvas>
-                    <canvas class="overlay"></canvas>
+        <div class="box title"><h1>Mandelbrot &nbsp; - &nbsp; <span class="formulae"></span></h1></div>
+        <div class="flex_h">
+            <div class="flex_v">
+                <div class="mandelbrot flex_v">
+                    <h2>Explore</h2>
+                    <div class="canvases box">
+                        <canvas class="mandelbrot"></canvas>
+                        <canvas class="overlay"></canvas>
+                    </div>
+                    <label>c:<input class="c" name="c"></label>
+                    <div class="len"></div>
+                    <div class="z9"></div>
+                    <div class="logz9"></div>
+                    <div class="wobble"></div>
+                    <div class="stddev"></div>
+                    <button class="spiral" data-stoplabel="Stop">Spiral</button>
                 </div>
-                <label>c:<input class="c" name="c"></label>
-                <div class="len"></div>
-                <div class="z9"></div>
-                <div class="logz9"></div>
-                <div class="wobble"></div>
-                <div class="stddev"></div>
-                <button class="spiral" data-stoplabel="Stop">Spiral</button>
+                <div class="guide">
+                    <h3>
+                        Level 1 - Complex numbers
+                    </h3>
+                    <p>
+                        You probably already know this, but the Mandelbrot is based on <i>complex numbers</i>. 
+                    </p>                        
+                    <p>                        
+                        Complex numbers are one part normal number: for example: $-2$<br/>
+                        and one part an <i>imaginary number</i>*, for example: $1$  $i$. **
+                    </p>                        
+                    <p>                    
+                        The complex number is written as $-2 + 1i$, and we can draw this number in a coordinate system, just like  $x$, and $y$
+                    </p>                        
+                    <p>                    
+                        $(x,y) = (-2, +1)$                        
+                    </p>
+                    <p>                    
+                        * $i$ is defined as $i = sqrt(-1)$ <br/>
+                        or as $i^2 = -1$
+                    </p>                        
+                    <p>                    
+                        ** $1$ $i$ is normally written just $i$, but I'll keep the number of $i$s explicit.
+                    </p>                        
+                </div>
             </div>
-            <div class="orbit">
-                <h2>The steps joined</h2>
-                <canvas class="box"></canvas>
+            <div class="flex_v">            
+                <div class="orbit">
+                    <h2>The steps joined</h2>
+                    <canvas class="box"></canvas>
+                </div>
+                <div class="magnitudes">
+                    <h2>Distance from origo to each step</h2>
+                    <div class="magnitudes-box box flex_v">
+                        <canvas></canvas>
+                        <div class="lengths" style="width:300px">vegard</div>
+                    </div>  
+                </div>
             </div>
-        </div>
-        <div class="magnitudes">
-            <h2>Length og each step</h2>
-            <div class="magnitudes-box box">
-                <canvas></canvas>
-                <div class="lengths"></div>
-            </div>  
         </div>
     </div>
 </body>

@@ -11,7 +11,7 @@ class OrbitView {
         this.model = model;
         let canvas = this.$orbit.find('canvas');
         let data = model.magnitudes.map(x => x.num);
-        let orbit_zoom = 1.0;
+        let orbit_zoom = 1.5;
 
         this.orbit_chart = new Chart(canvas, {
             type: 'scatter',
@@ -79,14 +79,13 @@ class OrbitView {
     }
 
     display(model) {
-        let canvas = this.$orbit.find('canvas');
         let data = model.magnitudes.map(x => x.num);
         this.orbit_chart.data.datasets[1].data = [data[1]];
         this.orbit_chart.data.datasets[2].data = data;
-        let zoom = (this.fixed_zoom) ? this.fixed_zoom : (data.length < 13) ? 20 : (data.length < 30) ? 5 : 1;
+
+        let zoom = (this.fixed_zoom) ? this.fixed_zoom : (model.magnitudes[data.length-1].magnitude<2) ? 1 : (data.length < 13) ? 20 : (data.length < 30) ? 5 : 1;
         this.setZoom(zoom);
         this.orbit_chart.update();
-
     }
 
     setZoom(zoom) {

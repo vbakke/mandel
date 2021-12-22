@@ -51,7 +51,27 @@ class MagnitudeView {
                         // suggestedMin: 50,
                         suggestedMax: 1,
                         type: 'logarithmic',
-                        ticks: { color: "rgb(185,191,214)", },
+                        ticks: { 
+                            color: "rgb(185,191,214)", 
+                            callback: function(value, index, values) {
+                                if (values[index].major) {
+                                    if (value >= 0.001 && value <= 1000 ) {
+                                        return ''+value;
+                                    } else {
+                                        let exp = Math.log10(value).toFixed();
+                                        let sup = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+                                        let str = '10';
+                                        if (exp < 0) str+='⁻',exp=exp.slice(1);
+                                        for (let pos = 0; pos < exp.length; pos++) {
+                                            str += sup[parseInt(exp[pos])];
+                                        }
+                                        return str;
+                                    }
+                                } else {
+                                    return '';
+                                }
+                            }
+                        },
                         grid: { color: "rgb(185,191,214)", },
                     }
                 },
@@ -67,6 +87,13 @@ class MagnitudeView {
         this.chart.data.datasets[0].data = data;
         this.chart.update();
 
+        // let $list = $('<ul></ul>');
+        // for (let i = 0; i< Math.min(10, model.magnitudes.length); i++) {
+        //     let p = model.magnitudes[i].num;
+        //     $list.append('<li><span>'+p.x.toFixed(2)+', '+p.y.toFixed(2)+' i</span></li>')
+        // }
+        $('.lengths').html(data.length);
+        
     }
 
 }

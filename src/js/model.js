@@ -7,19 +7,53 @@ class Model {
         this.num = num || {x: 0, y: 0};  
         this.num.count = 0;
         this.level = 1;
-        this.level_count = [2500, 10000];
+        this.level_xps = [2500, 10000];
         this.magnitudes = [];
-        this.max_length = 100;
+        this.max_length = 2;
         
 
         this.mandel_view = { cx: 0, cy: 0, scale: 50 };
+
+        this.levels = [
+            {xp: 1, max_length: 1, explore: false, orbit_zoom: 2, magnitude: false},
+        ];
+
+        this.ui = {
+            formulae: 'Z2',
+            formulaes: {
+                'Z2': {
+                    label: 'Z<sub>n+1</sub> = Z<sub>n</sub><sup>2</sup>',
+                    label_mathjax: 'zveb_{n+1} = z_n^2',
+                    maxSpiral: 1.5,
+                    level: 1,
+                }, 
+                'Z2Z': {
+                    label: 'Z<sub>n+1</sub> = Z<sub>n</sub><sup>2</sup> + Z<sub>n</sub>',
+                    maxSpiral: 1.6,
+                    level: 2,
+                }, 
+                'Z2C': {
+                    label: 'Z<sub>n+1</sub> = Z<sub>n</sub><sup>2</sup> + C',
+                    maxSpiral: 1.9,
+                    level: 3,
+                },
+                'Zsin': {
+                    label: 'Z<sub>n+1</sub> = Z<sub>n</sub><sup>2</sup> + sin()',
+                    maxSpiral: 1.9,
+                    level: 10,
+                },
+            },
+            getFomulaeUI: () => {
+                return this.ui.formulaes[this.ui.formulae];
+            },
+        };
 
         this.calcMagnitudes();
     }
 
     nextLevel() {
-        if (this.level <= this.level_count.length)
-            return this.level_count[this.level - 1];
+        if (this.level <= this.level_xps.length)
+            return this.level_xps[this.level - 1];
         else
             return null;
     }
@@ -44,7 +78,8 @@ class Model {
     calcMagnitudes() {
         this.magnitudes = [];
         let num = { x: 0, y: 0 };
-        for (let i = 0; i < this.max_length; i++) {
+        this.infinite = false;
+        for (let i = 0; i <= this.max_length; i++) {
             let magnitude = Math.sqrt(num.x * num.x + num.y * num.y);
             let elem = {
                 num, magnitude,
@@ -53,6 +88,9 @@ class Model {
 
             if (i==0) num = null; // DBG
             if (elem.magnitude === Infinity) {
+                this.infinite = true;
+                break;
+            } else if (i>0 && elem.magnitude < 0.000001) {
                 break;
             } else {
                 this.magnitudes.push(elem);
@@ -67,7 +105,7 @@ class Model {
         if (magnitudes.length === this.max_length) {
             let prev = magnitudes[0];
             let mean = magnitudes.reduce((a, b) => a + b) / this.magnitudes.length;
-            for (let i = 1; i<this.max_length; i++) {
+            for (let i = 1; i<=this.max_length; i++) {
                 let current = magnitudes[i];
                 this.wobble += current * prev;
                 this.stddev += (mean-current)*(mean-current);
@@ -85,11 +123,17 @@ class Model {
         // }
 
         // Square the complex number
-        if (num === null) num = {x: this.num.x, y: this.num.y};
-        let prev = {x: num.x, y:num.y};
+        if (num === null) return {x: this.num.x, y: this.num.y};
+
+        let add = null;
+        if (this.ui.formulae === 'Z2') add = {x: 0, y: 0}
+        else if (this.ui.formulae === 'Z2Z') add = {x: num.x, y: num.y}
+        else if (this.ui.formulae === 'Z2C') add = {x: this.num.x, y: this.num.y}
+        else if (this.ui.formulae === 'Zsin') add = {x: Math.sin(num.x)*Math.cosh(num.y), y: Math.cos(num.x)*Math.sinh(num.y)}
+
         let next_num = {
-            x: num.x * num.x - num.y * num.y + prev.x,
-            y: 2 * num.x * num.y + prev.y,
+            x: num.x * num.x - num.y * num.y + add.x,
+            y: 2 * num.x * num.y + add.y,
         }
         return next_num;
     }

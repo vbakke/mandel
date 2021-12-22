@@ -7,7 +7,8 @@
     "lib": "js"
   },
   "dependencies": {
-    "chart.js": "^3.6.0"
+    "chart.js": "^3.6.0",
+    "mathjax-full": "^3.2.0"
   },
   "devDependencies": {
     "browserify": "^16.5.2",

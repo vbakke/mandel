@@ -1,12 +1,12 @@
 
 .flex_h {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .flex_v {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .title {
@@ -42,6 +42,9 @@ body {
     width: 600px;
     height: 300px;
 }
+canvas.overlayXX {
+    display: none; 
+}
 
 .mandelbrot canvas {
     position: absolute;
@@ -61,10 +64,18 @@ canvas {
 }
 
 .magnitudes-box {
-    width: 300px;
+    width: 400px;
     height: 300px;
 }
 
+.guide {
+    background-color: #ded7be;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    padding: 20px;
+    border: solid 8px hsl(38deg 17% 51%);
+    color: black;
+    margin-top: 19px;
+}
 
 .cursor-pointer {
     cursor: pointer;

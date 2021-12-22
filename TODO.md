@@ -1,10 +1,13 @@
 # ToDo
-- Add extra formulaes
+- Add Tutoral window pane
+- Add tutorial
+- Add model: length of track
+- Add model: on/off: views based on level
 - Add UI Auto-zoom switch på Orbit
 - Add UI Update switch på Orbit og Magnitude
 - Add levels, to achive Spiral and full background
-- Add tutorial
-
+- Move spiral()
+- 
 # Tutorial
 - First sample: 0.6 + 0.4 i (infinite)
 -               0.71 + 0.25 i (infinite)
@@ -28,6 +31,8 @@
 
 
 # Done
+- Add: Orbit UI: Show length of track
+- Add extra formulaes
 - Add click to "let go" of pos drag
 - Stop orbit zoom when animating
 - Stop animation button

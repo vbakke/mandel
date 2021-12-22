@@ -33,7 +33,8 @@ class View {
         this.mandel_view.display(this.model);
         this.orbit_view.display(this.model);
         this.magnitude_view.display(this.model);
-
+        let formulae = this.model.ui.getFomulaeUI();
+        $('.formulae').html(formulae.label);
     }
 
 
@@ -49,7 +50,7 @@ class View {
             // Start fill animation
             $button.data('startlabel', $button.text());  // Keep original label
             $button.text($button.data('stoplabel'));
-            this.spiral(1/this.mandel_view.scale);
+            this.spiral(3/this.mandel_view.scale);
             $(this).triggerHandler($.Event('fill_animation', { running: true }));
         } else {
             // Stop fill animation
@@ -58,13 +59,17 @@ class View {
         }
     }
 
-    spiral(step, pos, r, angle, i) {
+    spiral(step, pos, r, angle, i, maxSpiral) {
         
 
         pos = pos || {x:0, y:0};
-        r = r || 0.000001;
+        r = r || Math.random()*step;
         angle = angle || Math.random() * 2 * Math.PI;
         i = i || 0;
+        if (!maxSpiral) {
+            let formulae = this.model.ui.getFomulaeUI();
+            maxSpiral = formulae.maxSpiral;
+        }
 
         let tan = Math.atan(step / r);
         let delta_r = step * tan / 2 / Math.PI; // * (1+Math.random());
@@ -72,10 +77,10 @@ class View {
         pos = { x: r * Math.cos(angle), y: r * Math.sin(angle) };
         r += delta_r;
         
-        if (this.fill_animation && r < 2.0) {
+        if (this.fill_animation && r < maxSpiral) {
             $(this).triggerHandler($.Event('pos_changed', { pos: pos }));
             setTimeout(() => {
-                this.spiral(step, pos, r, angle, i+1);
+                this.spiral(step, pos, r, angle, i+1, maxSpiral);
             }, 0);
         } else {
             this.on_startstop_fillanimation(false);
@@ -89,8 +94,8 @@ class View {
             return prefix + num.toFixed(3);
         }
         this.mandel_view.$mandel.find('input.c').val(n(model.num.x) + ' ' + n(model.num.y) + ' i');
-        this.mandel_view.$mandel.find('.len').text('len = ' + model.num.count);
-        // this.mandel_view.$mandel.find('.len').text('len = ' + model.magnitudes.length);
+        this.mandel_view.$mandel.find('.len').text('len = ' + model.magnitudes.length);
+        this.mandel_view.$mandel.find('.z9').text('count = ' + model.num.count);
         // this.mandel_view.$mandel.find('.z9').text('Z₉ = ' + model.magnitudes[9].magnitude);
         // this.mandel_view.$mandel.find('.logz9').text('log(Z₉) = ' + Math.log10(model.magnitudes[9].magnitude));
         // this.mandel_view.$mandel.find('.wobble').text('wobble = ' + model.wobble);
