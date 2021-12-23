@@ -10,13 +10,13 @@ class MandelView {
         this.overlay_canvas = this.$mandel.find('canvas.overlay')[0];
         this.mandel_ctx = this.mandel_canvas.getContext('2d');
         this.overlay_ctx = this.overlay_canvas.getContext('2d');
-        
+
         this.overlay_canvas.classList.toggle('cursor-pointer', this.drag_on);
 
         // Setup event handlers
         this.$mandel.find('canvas').click((event) => { return this.on_mandel_mouseclick(event) });
         this.$mandel.find('canvas').mousemove((event) => { return this.on_mandel_mousemove(event) });
-        this.$mandel.find('input.c').change((event) => { return this.on_num_changes(event) });
+        this.$mandel.find('input.num').change((event) => { return this.on_num_changes(event) });
     }
 
 
@@ -45,10 +45,11 @@ class MandelView {
         let y = -model.num.y * scale;
         let tx = model.mandel_view.tx;
         let ty = model.mandel_view.ty;
+        let plot = model.explore_plot;
 
         // ---- Overlay layer ----
-        
-        ctx.clearRect(-tx, -ty, tx*2, ty*2);
+
+        ctx.clearRect(-tx, -ty, tx * 2, ty * 2);
 
         // Draw the unit circle
         ctx.beginPath();
@@ -57,7 +58,7 @@ class MandelView {
         ctx.strokeStyle = 'black';
         ctx.stroke();
         // ctx.closePath();
-        
+
         // Cross hair
         let crossSize = 10;
         ctx.beginPath();
@@ -75,35 +76,37 @@ class MandelView {
         ctx.stroke();
 
         let nextLevel = model.nextLevel();
-        if ( nextLevel ) {
+        if (nextLevel) {
             let level_w = 40;
             let level_h = 10;
             let fill_w = level_w * (model.num.count / nextLevel);
             ctx.beginPath();
-            ctx.rect(tx-level_w-10, -ty+10, fill_w, level_h);
-            ctx.fillStyle =  '#05cc05';
+            ctx.rect(tx - level_w - 10, -ty + 10, fill_w, level_h);
+            ctx.fillStyle = '#05cc05';
             ctx.fill();
-            ctx.rect(tx-level_w-10, -ty+10, level_w, level_h);
+            ctx.rect(tx - level_w - 10, -ty + 10, level_w, level_h);
             ctx.strokeStyle = '#aaaaaa';
             ctx.stroke();
         }
 
-        // ---- Mandelbrot layer ----
-        // Color the dot
-        if (model.infinite) { // Outside
-            let colVal = Math.min(Math.max((model.magnitudes.length - 9) / 10, 0.1), 0.9);
-            // let val = Math.log10(Math.log10(model.magnitudes[9].magnitude));
-            // let colVal = Math.min(Math.max((3/(val+1)), 0.1), 0.9);
-            colVal = Math.round((1 - colVal) * 256);
-            ctx_mandel.fillStyle = 'rgb(' + 256 + ', ' + colVal + ', ' + colVal + ')';
-        } else { // Inside
-            let colVal = Math.min(Math.max((model.stddev  / model.max_length +0.1) / 0.4, 0.1), 0.9);
-            colVal = Math.round((1 - colVal) * 256);
-            ctx_mandel.fillStyle = 'rgb(' + colVal + ', ' + (colVal/2+150) + ', ' + colVal + ')';
+        if (plot) {
+            // ---- Mandelbrot layer ----
+            // Color the dot
+            if (model.infinite) { // Outside
+                let colVal = Math.min(Math.max((model.magnitudes.length - 9) / 10, 0.1), 0.9);
+                // let val = Math.log10(Math.log10(model.magnitudes[9].magnitude));
+                // let colVal = Math.min(Math.max((3/(val+1)), 0.1), 0.9);
+                colVal = Math.round((1 - colVal) * 256);
+                ctx_mandel.fillStyle = 'rgb(' + 256 + ', ' + colVal + ', ' + colVal + ')';
+            } else { // Inside
+                let colVal = Math.min(Math.max((model.stddev / model.max_length + 0.1) / 0.4, 0.1), 0.9);
+                colVal = Math.round((1 - colVal) * 256);
+                ctx_mandel.fillStyle = 'rgb(' + colVal + ', ' + (colVal / 2 + 150) + ', ' + colVal + ')';
+            }
+
+            ctx_mandel.fillRect(x - .5, y - .5, 1, 1);
         }
 
-        ctx_mandel.fillRect(x - .5, y - .5, 1, 1);
-        
     }
 
     setCanvasSize(myCanvas) {
@@ -176,7 +179,7 @@ class MandelView {
         console.log('Klikk: ' + this.drag_on);
         this.overlay_canvas.classList.toggle('cursor-pointer');
     }
-    
+
     on_mandel_mousemove(event) {
         if (this.drag_on) {
             let pos = this.getMousePos(this.mandel_canvas, event);
@@ -195,7 +198,7 @@ class MandelView {
 
     on_num_changes(event) {
         let values = event.target.value.replace(/\+/g, '').split(/\s+/);
-        let pos = {x: parseFloat(values[0]), y: parseFloat(values[1])};
+        let pos = { x: parseFloat(values[0]), y: parseFloat(values[1]) };
         $(this).triggerHandler(
             $.Event('pos_changed', { 'pos': pos })
         );

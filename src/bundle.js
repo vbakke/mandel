@@ -44,19 +44,55 @@ class Model {
         this.num = num || {x: 0, y: 0};  
         this.num.count = 0;
         this.level = 1;
-        this.level_count = [2500, 10000];
+        this.level_xps = [2500, 10000];
         this.magnitudes = [];
-        this.max_length = 100;
+        this.max_length = 2;
         
 
         this.mandel_view = { cx: 0, cy: 0, scale: 50 };
+
+        this.levels = [
+            {xp_delta: 1, max_length: 0, explore: false, orbit_zoom: 2, magnitude: false},
+            {xp_delta: 1, max_length: 1, },
+            {xp_delta: 1, max_length: 2, },
+        ];
+
+        this.ui = {
+            formulae: 'Z2',
+            formulaes: {
+                'Z2': {
+                    label: 'Z<sub>n+1</sub> = Z<sub>n</sub><sup>2</sup>',
+                    label_mathjax: 'zveb_{n+1} = z_n^2',
+                    maxSpiral: 1.5,
+                    level: 1,
+                }, 
+                'Z2Z': {
+                    label: 'Z<sub>n+1</sub> = Z<sub>n</sub><sup>2</sup> + Z<sub>n</sub>',
+                    maxSpiral: 1.6,
+                    level: 2,
+                }, 
+                'Z2C': {
+                    label: 'Z<sub>n+1</sub> = Z<sub>n</sub><sup>2</sup> + C',
+                    maxSpiral: 1.9,
+                    level: 3,
+                },
+                'Zsin': {
+                    label: 'Z<sub>n+1</sub> = Z<sub>n</sub><sup>2</sup> + sin()',
+                    maxSpiral: 1.9,
+                    level: 10,
+                },
+            },
+            getFomulaeUI: () => {
+                return this.ui.formulaes[this.ui.formulae];
+            },
+        };
 
         this.calcMagnitudes();
     }
 
     nextLevel() {
-        if (this.level <= this.level_count.length)
-            return this.level_count[this.level - 1];
+        if (this.level <= this.level_xps.length)
+            return this.level_xps[this.level - 1];
         else
             return null;
     }
@@ -81,7 +117,8 @@ class Model {
     calcMagnitudes() {
         this.magnitudes = [];
         let num = { x: 0, y: 0 };
-        for (let i = 0; i < this.max_length; i++) {
+        this.infinite = false;
+        for (let i = 0; i <= this.max_length; i++) {
             let magnitude = Math.sqrt(num.x * num.x + num.y * num.y);
             let elem = {
                 num, magnitude,
@@ -90,6 +127,9 @@ class Model {
 
             if (i==0) num = null; // DBG
             if (elem.magnitude === Infinity) {
+                this.infinite = true;
+                break;
+            } else if (i>0 && elem.magnitude < 0.000001) {
                 break;
             } else {
                 this.magnitudes.push(elem);
@@ -104,7 +144,7 @@ class Model {
         if (magnitudes.length === this.max_length) {
             let prev = magnitudes[0];
             let mean = magnitudes.reduce((a, b) => a + b) / this.magnitudes.length;
-            for (let i = 1; i<this.max_length; i++) {
+            for (let i = 1; i<=this.max_length; i++) {
                 let current = magnitudes[i];
                 this.wobble += current * prev;
                 this.stddev += (mean-current)*(mean-current);
@@ -122,11 +162,17 @@ class Model {
         // }
 
         // Square the complex number
-        if (num === null) num = {x: this.num.x, y: this.num.y};
-        let prev = {x: num.x, y:num.y};
+        if (num === null) return {x: this.num.x, y: this.num.y};
+
+        let add = null;
+        if (this.ui.formulae === 'Z2') add = {x: 0, y: 0}
+        else if (this.ui.formulae === 'Z2Z') add = {x: num.x, y: num.y}
+        else if (this.ui.formulae === 'Z2C') add = {x: this.num.x, y: this.num.y}
+        else if (this.ui.formulae === 'Zsin') add = {x: Math.sin(num.x)*Math.cosh(num.y), y: Math.cos(num.x)*Math.sinh(num.y)}
+
         let next_num = {
-            x: num.x * num.x - num.y * num.y + prev.x,
-            y: 2 * num.x * num.y + prev.y,
+            x: num.x * num.x - num.y * num.y + add.x,
+            y: 2 * num.x * num.y + add.y,
         }
         return next_num;
     }
@@ -164,6 +210,12 @@ class View {
         $('button.spiral').click((event) => {
             this.on_startstop_fillanimation(!this.fill_animation);
         });
+
+
+        // Guide View
+        $('a.arrow').on('click', (event) => {
+            console.log('Guide:', event.target.classList);
+        });
     }
 
     display() {
@@ -171,7 +223,8 @@ class View {
         this.mandel_view.display(this.model);
         this.orbit_view.display(this.model);
         this.magnitude_view.display(this.model);
-
+        let formulae = this.model.ui.getFomulaeUI();
+        $('.formulae').html(formulae.label);
     }
 
 
@@ -187,7 +240,7 @@ class View {
             // Start fill animation
             $button.data('startlabel', $button.text());  // Keep original label
             $button.text($button.data('stoplabel'));
-            this.spiral(1/this.mandel_view.scale);
+            this.spiral(3/this.mandel_view.scale);
             $(this).triggerHandler($.Event('fill_animation', { running: true }));
         } else {
             // Stop fill animation
@@ -196,13 +249,17 @@ class View {
         }
     }
 
-    spiral(step, pos, r, angle, i) {
+    spiral(step, pos, r, angle, i, maxSpiral) {
         
 
         pos = pos || {x:0, y:0};
-        r = r || 0.000001;
+        r = r || Math.random()*step;
         angle = angle || Math.random() * 2 * Math.PI;
         i = i || 0;
+        if (!maxSpiral) {
+            let formulae = this.model.ui.getFomulaeUI();
+            maxSpiral = formulae.maxSpiral;
+        }
 
         let tan = Math.atan(step / r);
         let delta_r = step * tan / 2 / Math.PI; // * (1+Math.random());
@@ -210,10 +267,10 @@ class View {
         pos = { x: r * Math.cos(angle), y: r * Math.sin(angle) };
         r += delta_r;
         
-        if (this.fill_animation && r < 2.0) {
+        if (this.fill_animation && r < maxSpiral) {
             $(this).triggerHandler($.Event('pos_changed', { pos: pos }));
             setTimeout(() => {
-                this.spiral(step, pos, r, angle, i+1);
+                this.spiral(step, pos, r, angle, i+1, maxSpiral);
             }, 0);
         } else {
             this.on_startstop_fillanimation(false);
@@ -227,8 +284,8 @@ class View {
             return prefix + num.toFixed(3);
         }
         this.mandel_view.$mandel.find('input.c').val(n(model.num.x) + ' ' + n(model.num.y) + ' i');
-        this.mandel_view.$mandel.find('.len').text('len = ' + model.num.count);
-        // this.mandel_view.$mandel.find('.len').text('len = ' + model.magnitudes.length);
+        this.mandel_view.$mandel.find('.len').text('len = ' + model.magnitudes.length);
+        this.mandel_view.$mandel.find('.z9').text('count = ' + model.num.count);
         // this.mandel_view.$mandel.find('.z9').text('Z₉ = ' + model.magnitudes[9].magnitude);
         // this.mandel_view.$mandel.find('.logz9').text('log(Z₉) = ' + Math.log10(model.magnitudes[9].magnitude));
         // this.mandel_view.$mandel.find('.wobble').text('wobble = ' + model.wobble);
@@ -293,7 +350,27 @@ class MagnitudeView {
                         // suggestedMin: 50,
                         suggestedMax: 1,
                         type: 'logarithmic',
-                        ticks: { color: "rgb(185,191,214)", },
+                        ticks: { 
+                            color: "rgb(185,191,214)", 
+                            callback: function(value, index, values) {
+                                if (values[index].major) {
+                                    if (value >= 0.001 && value <= 1000 ) {
+                                        return ''+value;
+                                    } else {
+                                        let exp = Math.log10(value).toFixed();
+                                        let sup = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+                                        let str = '10';
+                                        if (exp < 0) str+='⁻',exp=exp.slice(1);
+                                        for (let pos = 0; pos < exp.length; pos++) {
+                                            str += sup[parseInt(exp[pos])];
+                                        }
+                                        return str;
+                                    }
+                                } else {
+                                    return '';
+                                }
+                            }
+                        },
                         grid: { color: "rgb(185,191,214)", },
                     }
                 },
@@ -309,6 +386,13 @@ class MagnitudeView {
         this.chart.data.datasets[0].data = data;
         this.chart.update();
 
+        // let $list = $('<ul></ul>');
+        // for (let i = 0; i< Math.min(10, model.magnitudes.length); i++) {
+        //     let p = model.magnitudes[i].num;
+        //     $list.append('<li><span>'+p.x.toFixed(2)+', '+p.y.toFixed(2)+' i</span></li>')
+        // }
+        $('.lengths').html(data.length);
+        
     }
 
 }
@@ -323,14 +407,19 @@ class MandelView {
     constructor() {
         this.$mandel = $('.mandelbrot');
 
+        this.drag_on = true;
+
         this.mandel_canvas = this.$mandel.find('canvas.mandelbrot')[0];
         this.overlay_canvas = this.$mandel.find('canvas.overlay')[0];
         this.mandel_ctx = this.mandel_canvas.getContext('2d');
         this.overlay_ctx = this.overlay_canvas.getContext('2d');
+        
+        this.overlay_canvas.classList.toggle('cursor-pointer', this.drag_on);
 
         // Setup event handlers
-        this.$mandel.find('canvas').mousemove((event) => { return this.on_mandel_mousemove(event) })
-        this.$mandel.find('input.c').change((event) => { return this.on_num_changes(event) })
+        this.$mandel.find('canvas').click((event) => { return this.on_mandel_mouseclick(event) });
+        this.$mandel.find('canvas').mousemove((event) => { return this.on_mandel_mousemove(event) });
+        this.$mandel.find('input.c').change((event) => { return this.on_num_changes(event) });
     }
 
 
@@ -404,7 +493,7 @@ class MandelView {
 
         // ---- Mandelbrot layer ----
         // Color the dot
-        if (model.wobble == 0) { // Outside
+        if (model.infinite) { // Outside
             let colVal = Math.min(Math.max((model.magnitudes.length - 9) / 10, 0.1), 0.9);
             // let val = Math.log10(Math.log10(model.magnitudes[9].magnitude));
             // let colVal = Math.min(Math.max((3/(val+1)), 0.1), 0.9);
@@ -485,18 +574,26 @@ class MandelView {
         }
     }
 
+    on_mandel_mouseclick(event) {
+        this.drag_on = !this.drag_on;
+        console.log('Klikk: ' + this.drag_on);
+        this.overlay_canvas.classList.toggle('cursor-pointer');
+    }
+    
     on_mandel_mousemove(event) {
-        let pos = this.getMousePos(this.mandel_canvas, event);
-        pos.x /= this.dpr * 2;
-        pos.y /= this.dpr * 2;
-        pos.x -= this.model.mandel_view.tx;
-        pos.y -= this.model.mandel_view.ty;
-        pos.x /= this.model.mandel_view.scale;
-        pos.y /= -this.model.mandel_view.scale;
+        if (this.drag_on) {
+            let pos = this.getMousePos(this.mandel_canvas, event);
+            pos.x /= this.dpr * 2;
+            pos.y /= this.dpr * 2;
+            pos.x -= this.model.mandel_view.tx;
+            pos.y -= this.model.mandel_view.ty;
+            pos.x /= this.model.mandel_view.scale;
+            pos.y /= -this.model.mandel_view.scale;
 
-        $(this).triggerHandler(
-            $.Event('pos_changed', { 'pos': pos })
-        );
+            $(this).triggerHandler(
+                $.Event('pos_changed', { 'pos': pos })
+            );
+        }
     }
 
     on_num_changes(event) {
@@ -528,7 +625,7 @@ class OrbitView {
         this.model = model;
         let canvas = this.$orbit.find('canvas');
         let data = model.magnitudes.map(x => x.num);
-        let orbit_zoom = 1.0;
+        let orbit_zoom = 1.5;
 
         this.orbit_chart = new Chart(canvas, {
             type: 'scatter',
@@ -596,14 +693,13 @@ class OrbitView {
     }
 
     display(model) {
-        let canvas = this.$orbit.find('canvas');
         let data = model.magnitudes.map(x => x.num);
         this.orbit_chart.data.datasets[1].data = [data[1]];
         this.orbit_chart.data.datasets[2].data = data;
-        let zoom = (this.fixed_zoom) ? this.fixed_zoom : (data.length < 13) ? 20 : (data.length < 30) ? 5 : 1;
+
+        let zoom = (this.fixed_zoom) ? this.fixed_zoom : (model.magnitudes[data.length-1].magnitude<2) ? 1 : (data.length < 13) ? 20 : (data.length < 30) ? 5 : 1;
         this.setZoom(zoom);
         this.orbit_chart.update();
-
     }
 
     setZoom(zoom) {

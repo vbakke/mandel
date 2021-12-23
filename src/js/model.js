@@ -4,18 +4,39 @@ class Model {
     constructor(num) {
         // The complex number c, and a mathematicion would use c = a + bi, not x and y. 
         // The mathematicion is right, but hopefully x and y is more understandable for non-mathematicions
-        this.num = num || {x: 0, y: 0};  
-        this.num.count = 0;
+        this.num = {x: 0, y: 0,
+            _xStr: null, _yStr: null,
+            get xStr() {
+                if (this._xStr === null) this._xStr = this._format(this.x);
+                return this._xStr;
+            },
+            get yStr() {
+                if (this._yStr === null) this._yStr = this._format(this.y);
+                return this._yStr;
+            },
+            _format: function(n) {
+                let prefix = (n < 0) ? '' : '+';
+                return prefix + n.toFixed(3);
+            }
+            };  
+        if (num) {
+            this.num.x = num.x;
+            this.num.y = num.y;
+        }
         this.level = 1;
         this.level_xps = [2500, 10000];
         this.magnitudes = [];
-        this.max_length = 2;
+        this.max_length = 1;
+        this.explore_plot = false;
+        this.orbit_zoom = 2;
         
 
         this.mandel_view = { cx: 0, cy: 0, scale: 50 };
 
         this.levels = [
-            {xp: 1, max_length: 1, explore: false, orbit_zoom: 2, magnitude: false},
+            {xp_delta: 1, max_length: 0, explore: false, orbit_zoom: 2, magnitude: false},
+            {xp_delta: 1, max_length: 1, },
+            {xp_delta: 1, max_length: 2, },
         ];
 
         this.ui = {
@@ -61,6 +82,7 @@ class Model {
     updateNum(num) {
         this.num.x = num.x;
         this.num.y = num.y;
+        this.num._xStr = this.num._yStr = null;
         this.num.count++;
         if (this.num.count > this.nextLevel()) {
             this.level++;

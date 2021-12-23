@@ -1,8 +1,13 @@
 # ToDo
-- Add Tutoral window pane
 - Add tutorial
+  - Next guide - Button Click
+  - Next level - Update model
+  - Next level - Update Views
+  - Next level - 
+  - Next level - Enable arrow
 - Add model: length of track
 - Add model: on/off: views based on level
+- Improve Auto-zoom when short array
 - Add UI Auto-zoom switch på Orbit
 - Add UI Update switch på Orbit og Magnitude
 - Add levels, to achive Spiral and full background
@@ -31,6 +36,7 @@
 
 
 # Done
+- Add Tutoral window pane
 - Add: Orbit UI: Show length of track
 - Add extra formulaes
 - Add click to "let go" of pos drag

@@ -3,7 +3,7 @@ const Model = require('./model.js');
 const View = require('./view.js');
 
 // let num = { x: 0.344, y: 0.336 };
-let num = { x: 0.3, y: 0.3 };
+let num = { x: 0.5, y: 0.6 };
 
 //$(() => {
 //    $('.mandelbrot').append('<span>Hei</span>')

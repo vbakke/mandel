@@ -26,54 +26,39 @@
         <div class="box title"><h1>Mandelbrot &nbsp; - &nbsp; <span class="formulae"></span></h1></div>
         <div class="flex_h">
             <div class="flex_v">
-                <div class="mandelbrot flex_v">
+                <div class="box mandelbrot flex_v">
                     <h2>Explore</h2>
-                    <div class="canvases box">
+                    <div class="text">
+                        <label class="num">num = <input class="num" name="c"></label>
+                    </div>
+                    <div class="canvases panel">
                         <canvas class="mandelbrot"></canvas>
                         <canvas class="overlay"></canvas>
                     </div>
-                    <label>c:<input class="c" name="c"></label>
-                    <div class="len"></div>
-                    <div class="z9"></div>
-                    <div class="logz9"></div>
-                    <div class="wobble"></div>
-                    <div class="stddev"></div>
+                    <div class="text len"></div>
+                    <div class="text z9"></div>
+                    <div class="text logz9"></div>
+                    <div class="text wobble"></div>
+                    <div class="text stddev"></div>
                     <button class="spiral" data-stoplabel="Stop">Spiral</button>
                 </div>
-                <div class="guide">
-                    <h3>
-                        Level 1 - Complex numbers
-                    </h3>
-                    <p>
-                        You probably already know this, but the Mandelbrot is based on <i>complex numbers</i>. 
-                    </p>                        
-                    <p>                        
-                        Complex numbers are one part normal number: for example: $-2$<br/>
-                        and one part an <i>imaginary number</i>*, for example: $1$  $i$. **
-                    </p>                        
-                    <p>                    
-                        The complex number is written as $-2 + 1i$, and we can draw this number in a coordinate system, just like  $x$, and $y$
-                    </p>                        
-                    <p>                    
-                        $(x,y) = (-2, +1)$                        
-                    </p>
-                    <p>                    
-                        * $i$ is defined as $i = sqrt(-1)$ <br/>
-                        or as $i^2 = -1$
-                    </p>                        
-                    <p>                    
-                        ** $1$ $i$ is normally written just $i$, but I'll keep the number of $i$s explicit.
-                    </p>                        
+                <div class="guide box popup">
+                    <div class="guide_content">
+                    </div>  
+                    <div>
+                        <a href="#" class="arrow prev"></a>
+                        <a href="#" class="arrow next"></a>
+                    </div> 
                 </div>
             </div>
             <div class="flex_v">            
-                <div class="orbit">
+                <div class="box orbit">
                     <h2>The steps joined</h2>
-                    <canvas class="box"></canvas>
+                    <canvas class="panel"></canvas>
                 </div>
-                <div class="magnitudes">
+                <div class="box magnitudes">
                     <h2>Distance from origo to each step</h2>
-                    <div class="magnitudes-box box flex_v">
+                    <div class="magnitudes-box panel flex_v">
                         <canvas></canvas>
                         <div class="lengths" style="width:300px">vegard</div>
                     </div>  

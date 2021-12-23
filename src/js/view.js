@@ -1,6 +1,7 @@
 const MandelView = require('./views/mandel_view');
 const OrbitView = require('./views/orbit_view');
 const MagnitudeView = require('./views/magnitude_view');
+const GuideView = require('./views/guide_view');
 
 class View {
     self = this;
@@ -9,6 +10,7 @@ class View {
         this.mandel_view = new MandelView();
         this.orbit_view = new OrbitView();
         this.magnitude_view = new MagnitudeView();
+        this.guide_view = new GuideView();
 
         this.fill_animation = false;
     }
@@ -18,6 +20,7 @@ class View {
         this.mandel_view.init(model);
         this.orbit_view.init(model);
         this.magnitude_view.init(model);
+        this.guide_view.init(model);
 
         $(this.mandel_view).on('pos_changed', (event) => {
             $(this).triggerHandler($.Event(event.type, { pos: event.pos }));
@@ -26,6 +29,13 @@ class View {
         $('button.spiral').click((event) => {
             this.on_startstop_fillanimation(!this.fill_animation);
         });
+
+
+        // Guide View
+        $('a.arrow').on('click', (event) => {
+            console.log('Guide:', event.target.classList);
+            $(this).triggerHandler($.Event('next_guide'));
+        });
     }
 
     display() {
@@ -33,6 +43,7 @@ class View {
         this.mandel_view.display(this.model);
         this.orbit_view.display(this.model);
         this.magnitude_view.display(this.model);
+        this.guide_view.display(this.model);
         let formulae = this.model.ui.getFomulaeUI();
         $('.formulae').html(formulae.label);
     }
@@ -89,11 +100,7 @@ class View {
     }
 
     displayConsole(model) {
-        function n(num) {
-            let prefix = (num < 0) ? '' : '+';
-            return prefix + num.toFixed(3);
-        }
-        this.mandel_view.$mandel.find('input.c').val(n(model.num.x) + ' ' + n(model.num.y) + ' i');
+        this.mandel_view.$mandel.find('input.num').val(model.num.xStr + ' ' + model.num.yStr + ' i');
         this.mandel_view.$mandel.find('.len').text('len = ' + model.magnitudes.length);
         this.mandel_view.$mandel.find('.z9').text('count = ' + model.num.count);
         // this.mandel_view.$mandel.find('.z9').text('Z₉ = ' + model.magnitudes[9].magnitude);

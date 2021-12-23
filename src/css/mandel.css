@@ -17,7 +17,7 @@ h1 {
     margin: 0;
 }
 h2 {
-    margin: 15px 10px 5px;
+    margin: 15px 0px 5px;
 }
 
 
@@ -34,8 +34,11 @@ body {
 }
 
 .box {
-    background: #394264;
     margin: 10px;
+    padding: 10px;
+}
+.panel {
+    background: #394264;
 }
 .mandelbrot .canvases,
 .mandelbrot canvas {
@@ -46,12 +49,22 @@ canvas.overlayXX {
     display: none; 
 }
 
-.mandelbrot canvas {
-    position: absolute;
+.mandelbrot label.num {
+    font-size: 1.3rem;
 }
 
-.mandelbrot input.c {
+.mandelbrot input.num {
+    font-size: 1.6rem;
     width: 20rem;
+    background-color: #838caf;
+}
+
+.mandelbrot .canvases {
+    margin: 10px 0;
+}
+
+.mandelbrot canvas {
+    position: absolute;
 }
 
 .orbit canvas {
@@ -71,12 +84,53 @@ canvas {
 .guide {
     background-color: #ded7be;
     border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-    padding: 20px;
+    padding: 20px 60px;
     border: solid 8px hsl(38deg 17% 51%);
     color: black;
     margin-top: 19px;
 }
 
+.guide.popup {
+    position: fixed;
+    width: 780px;
+    top: 380px;
+    left: 50%;
+    font-size: 1.6rem;
+    transform: translateX(-50%);
+}
+
 .cursor-pointer {
     cursor: pointer;
+}
+
+
+.arrow {
+    position: absolute;
+    top: 80%;
+    width: 3vmin;
+    height: 3vmin;
+    background: transparent;
+    border-top: 1vmin solid white;
+    border-right: 1vmin solid white;
+    box-shadow: 0 0 0 lightgrey;
+    transition: all 200ms ease;
+}
+
+.arrow.prev {
+    left: 20px;
+    transform:  rotate(-135deg);
+}
+.arrow.next {
+    right: 20px;
+    transform:  rotate(45deg);
+    border-color: #87c868;
+}
+
+.arrow.disabled {
+    border-color: #c5b6b6;
+}
+
+.arrow:hover {
+    border-color: orange;
+    box-shadow: 0.5vmin -0.5vmin 0 #56bc25;
 }

@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "chart.js": "^3.6.0",
-    "mathjax-full": "^3.2.0"
+    "mathjax-full": "^3.2.0",
+    "underscore": "^1.13.2"
   },
   "devDependencies": {
     "browserify": "^16.5.2",
