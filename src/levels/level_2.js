@@ -1,5 +1,7 @@
-{explore: "dont plot", orbit: 2, magnitude: false}
-
+module.exports = {
+    settings: {explore: "dont plot", orbit: 2, magnitude: false},
+    html: `
+<div class="guide_lvl_2">
 <h3>Level 2 - Squared complexity</h3>
 <p>
     The square of z = -2 + 1i follows the<br/>
@@ -12,3 +14,5 @@
     $= 4 -4i -1$  <br/>
     $= 3 - 4i$  <br/>
 </p>
+</div>`
+}
