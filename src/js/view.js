@@ -26,16 +26,14 @@ class View {
             $(this).triggerHandler($.Event(event.type, { pos: event.pos }));
         });
 
+        $(this.guide_view).on('guide_change', (event) => {
+            $(this).triggerHandler($.Event(event.type, { level: event.level }));
+        });
+
         $('button.spiral').click((event) => {
             this.on_startstop_fillanimation(!this.fill_animation);
         });
 
-
-        // Guide View
-        $('a.arrow').on('click', (event) => {
-            console.log('Guide:', event.target.classList);
-            $(this).triggerHandler($.Event('next_guide'));
-        });
     }
 
     display() {

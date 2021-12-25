@@ -16,7 +16,7 @@ class Model {
             },
             _format: function(n) {
                 let prefix = (n < 0) ? '' : '+';
-                return prefix + n.toFixed(3);
+                return prefix + n.toFixed(2);
             }
             };  
         if (num) {

@@ -5,19 +5,35 @@ class GuideView {
     self = this;
 
     constructor() {
-        this.$guide = $('.guide_content');
-
+        this.$guide = $('.guide');
+        this.$content = this.$guide.find('.guide_content');
+        
     }
-
-
+    
+    
     init(model) {
         this.model = model;
-        this.template = _.template(level1);
+        this.template = _.template(level1.html);
+        
+        // Guide View
+        this.$guide.find('a.arrow').on('click', (event) => { 
+            return this.on_guide_change(event)
+        });
+        
     }
 
     display(model) {
         let html = this.template(model.num);
-        this.$guide.html(html);
+        this.$content.html(html);
+    }
+
+    on_guide_change(event) {
+        let change = $(event.target).hasClass('next') ? +1 : -1;
+        let level = this.model.level + change;
+
+        $(this).triggerHandler(
+            $.Event('guide_change', { level: level })
+        );
     }
 
 }
